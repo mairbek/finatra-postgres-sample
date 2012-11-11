@@ -1,6 +1,6 @@
 package com.mairbek.contacts
 
-import com.twitter.finatra.{Controller, FinatraServer, View}
+import com.twitter.finatra.{Controller, FinatraServer}
 import com.twitter.util.Future
 import com.twitter.finagle.postgres.Client
 
@@ -15,6 +15,25 @@ object App {
         contacts <- repo.allContacts()
       } yield (render.json(contacts))
     }
+
+//    post("/contacts") {
+//      request =>
+//        println(request.getContent())
+//        println(request.contentString)
+//        println(request.params.get("name"))
+//        val param = for {
+//          name <- request.params.get("name")
+//          email <- request.params.get("email")
+//          phone <- request.params.get("phone")
+//        } yield (Contact(name, email, phone))
+//
+//        val result = param match {
+//          case Some(Contact(name, email, phone)) => repo.addContact(name, email, phone)
+//          case None => Future.exception(new IllegalArgumentException("Unknown contact"))
+//        }
+//
+//        result.map(_ => render.plain("").status(200))
+//    }
 
   }
 
@@ -32,11 +51,15 @@ object App {
 
 trait ContactRepository {
   def allContacts(): Future[Seq[Contact]]
+
+  def addContact(name: String, email: String, phone: String): Future[Unit]
 }
 
 
 class InMemoryContactRepository extends ContactRepository {
   def allContacts() = Future.value(List(Contact("Mairbek", "mkhadikov@gmail.com", "+38 123 345 67 89")))
+
+  def addContact(name: String, email: String, phone: String): Future[Unit] = Future.exception(new UnsupportedOperationException("oops"))
 }
 
 class PgContactRepository(client: Client) extends ContactRepository {
@@ -44,6 +67,9 @@ class PgContactRepository(client: Client) extends ContactRepository {
     row =>
       Contact(row.getString("name"), row.getString("email"), row.getString("phone"))
   }
+
+  def addContact(name: String, email: String, phone: String) =
+    client.execute("insert into contacts (name, email, phone) values ('" + name + "', '" + email + "', '" + phone + "')").map(r => Unit)
 }
 
 /*
