@@ -6,7 +6,6 @@ import com.mairbek.contacts.{Contact, ContactRepository, App}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import com.twitter.util.Future
-import collection.mutable
 
 @RunWith(classOf[JUnitRunner])
 class AppSpec extends SpecHelper {
