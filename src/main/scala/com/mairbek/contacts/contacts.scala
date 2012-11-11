@@ -70,7 +70,7 @@ object App {
     val javaUri = new java.net.URI(url)
 
     val user = javaUri.getUserInfo.split(':')(0)
-    val password = javaUri.getUserInfo.split(':')(0)
+    val password = javaUri.getUserInfo.split(':')(1)
     val host = javaUri.getHost + ":" + javaUri.getPort
     val database = javaUri.getPath.substring(1)
 
