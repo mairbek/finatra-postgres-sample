@@ -3,6 +3,8 @@ package com.mairbek.contacts
 import com.twitter.finatra.{Controller, FinatraServer}
 import com.twitter.util.Future
 import com.twitter.finagle.postgres.Client
+import com.twitter.logging.config.{LoggerConfig, ConsoleHandlerConfig}
+import com.twitter.logging.Logger
 
 case class Contact(name: String, email: String, phone: String)
 
@@ -39,6 +41,16 @@ object App {
 
   def main(args: Array[String]) {
     //    val repo = new InMemoryContactRepository
+
+
+    val config = new LoggerConfig {
+      node = ""
+      level = Logger.DEBUG
+      handlers = new ConsoleHandlerConfig {
+      }
+    }
+    config()
+
 
     val uri: Option[String] = sys.env.get("DATABASE_URL")
 
